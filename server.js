@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 const posts = [
   {id:1, name: 'post1'},
   {id:2, name: 'post2'},
@@ -31,6 +33,26 @@ app.get('/api/posts/:id', (req, res) => {
   }
   res.send(post)
 })
+
+
+app.post('/api/posts', (req, res) => {
+  // some validation
+  if(!req.body.name || req.body.name.length < 3){
+    res
+      .status(400) //bad req
+      .send('post name is required and shold be minimum 3 chars long')
+      return //!!!
+  }
+
+  const newPost = {
+    id: posts.length + 1,
+    name: req.body.name
+  }
+  posts.push(newPost)
+  res.send(posts)
+})
+
+
 
 
 app.get('*', (req, res) => {
