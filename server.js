@@ -1,3 +1,4 @@
+const Joi = require('joi') // input validator
 const express = require('express')
 const app = express()
 
@@ -36,11 +37,23 @@ app.get('/api/posts/:id', (req, res) => {
 
 
 app.post('/api/posts', (req, res) => {
-  // some validation
-  if(!req.body.name || req.body.name.length < 3){
+  // some validation using joi package
+  // define joi schema
+  const schema = {
+    name: Joi.string().min(3).required()
+  }
+
+  /**
+   * @returns {Object} error[null], value[req.body.name]
+   * if send invalid req - value will be null, error will be set
+   */
+  const result =  Joi.validate(req.body, schema)
+
+  // if(!req.body.name || req.body.name.length < 3){  //manual validation
+  if(result.error){
     res
       .status(400) //bad req
-      .send('post name is required and shold be minimum 3 chars long')
+      .send(result.error.details[0].message)
       return //!!!
   }
 
