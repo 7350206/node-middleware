@@ -35,25 +35,21 @@ app.get('/api/posts/:id', (req, res) => {
   res.send(post)
 })
 
-
+/* ADD NEW POST */
 app.post('/api/posts', (req, res) => {
-  // some validation using joi package
-  // define joi schema
-  const schema = {
-    name: Joi.string().min(3).required()
-  }
+  // 1) some validation using joi package (in external function)
 
   /**
    * @returns {Object} error[null], value[req.body.name]
    * if send invalid req - value will be null, error will be set
    */
-  const result =  Joi.validate(req.body, schema)
+  const {error} = validatePost(req.body)
 
   // if(!req.body.name || req.body.name.length < 3){  //manual validation
-  if(result.error){
+  if(error){
     res
       .status(400) //bad req
-      .send(result.error.details[0].message)
+      .send(error.details[0].message)
       return //!!!
   }
 
@@ -64,6 +60,47 @@ app.post('/api/posts', (req, res) => {
   posts.push(newPost)
   res.send(posts)
 })
+
+/* UPDATE POST */
+app.put('/api/posts/:id', (req, res) => {
+  // 1)check if post exists, if no - return 404 and exit
+  const post = posts.find(p => p.id === parseInt(req.params.id))
+  if(!post){
+    res.status(404).send('post not found')
+    return
+  }
+
+  // 2) validate, if no - return 400 and exit
+  // reuse external validation
+  // const result = validatePost(req.body)
+  // ------- use object destruct (validatePost returns {error, value})
+  const {error} = validatePost(req.body) //result.error
+  if(error){
+    res
+      .status(400)
+      .send(error.details[0].message)
+      return
+  }
+
+  // 3) update and show updated on client
+  post.name = req.body.name
+  res.send(posts)
+
+} )
+
+/**
+ * try external validation
+ * @param {String} req.body post name
+ * @returns {Object} error[null], value[req.body.name]
+ * if send invalid req - value will be null, error will be set
+ */
+function validatePost(post){
+  console.log('req.body:', post);
+  const schema = {
+    name: Joi.string().min(3).required()
+  }
+  return Joi.validate(post, schema)
+}
 
 
 
