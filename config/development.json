@@ -1,0 +1,6 @@
+{
+  "name":"awesome app in development mode",
+  "mail":{
+    "host":"dev-mail-server"
+  }
+}

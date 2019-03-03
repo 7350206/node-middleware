@@ -1,0 +1,6 @@
+{
+  "name": "awesome app in production mode",
+  "mail": {
+    "host": "prod-mail-server"
+  }
+}

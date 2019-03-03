@@ -1,4 +1,5 @@
 const helmet = require('helmet')
+const config = require('config') //configuration handling
 const Joi = require('joi') // input validator
 const express = require('express')
 const logger = require('./logger')
@@ -25,6 +26,13 @@ if(app.get('env')=== 'development') {
   app.use(morgan('tiny')) //tiny output format
   console.log('morgan enabled');
 }
+
+// configuration
+console.log('App name: ' + config.get('name'));
+console.log('Mail server name: ' + config.get('mail.host'));
+// use config/custom-environment-variables to map env to config files
+console.log('Mail server password: ' + config.get('mail.password'));
+
 
 app.use(logger)
 app.use(function(req, res, next){
