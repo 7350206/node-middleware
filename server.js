@@ -1,5 +1,9 @@
+// to handle set DEBUG env vars
+// $export DEBUG=app:needed_workspace
+const startUpDebugger = require('debug')('app:startup') // (debug)(when app starts)
+const dbDebugger = require('debug')('app:db') // (debug)(db only)
 const helmet = require('helmet')
-const config = require('config') //configuration handling
+const config = require('config') //configuration handling config/*.json
 const Joi = require('joi') // input validator
 const express = require('express')
 const logger = require('./logger')
@@ -24,8 +28,12 @@ app.use(helmet()) //add lot a headers
 // to disable $export NODE_ENV=production
 if(app.get('env')=== 'development') {
   app.use(morgan('tiny')) //tiny output format
-  console.log('morgan enabled');
+  // replace console log
+  startUpDebugger('morgan enabled');
 }
+
+// db work...
+dbDebugger('db handling')
 
 // configuration
 console.log('App name: ' + config.get('name'));
