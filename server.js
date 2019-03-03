@@ -2,6 +2,7 @@
 // $export DEBUG=app:needed_workspace
 const startUpDebugger = require('debug')('app:startup') // (debug)(when app starts)
 const dbDebugger = require('debug')('app:db') // (debug)(db only)
+const pug = require('pug')
 const helmet = require('helmet')
 const config = require('config') //configuration handling config/*.json
 const Joi = require('joi') // input validator
@@ -23,6 +24,12 @@ app.use(express.json()) // parses req.body if json
 app.use(express.urlencoded({extended:true})) //key=value&key=value contenttype:x-form-urlencoded
 app.use(express.static('public'))
 app.use(helmet()) //add lot a headers
+
+// view engine setup
+app.set('view engine','pug')
+app.set('views', './views') //default, may not be set
+
+
 
 // enable morgan in dev mode only
 // to disable $export NODE_ENV=production
@@ -58,7 +65,8 @@ const posts = [
 app.get('/', (req, res) => {
   res
     .status(200)
-    .send('hi')
+    // .send('hi there')
+    .render('index', {title:"Site app", message: "Hi there"} )
 })
 
 app.get('/api/posts', (req, res) => {
