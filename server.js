@@ -1,8 +1,37 @@
+const helmet = require('helmet')
 const Joi = require('joi') // input validator
 const express = require('express')
+const logger = require('./logger')
 const app = express()
+const morgan = require('morgan')
 
-app.use(express.json())
+
+// node environments
+//process.env.NODE_ENV // if not set - undefined
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`); //undefined
+
+//app.get('env') return 'development' by default
+console.log(`app: ${app.get('env')}`); //app:development
+
+
+app.use(express.json()) // parses req.body if json
+app.use(express.urlencoded({extended:true})) //key=value&key=value contenttype:x-form-urlencoded
+app.use(express.static('public'))
+app.use(helmet()) //add lot a headers
+
+// enable morgan in dev mode only
+// to disable $export NODE_ENV=production
+if(app.get('env')=== 'development') {
+  app.use(morgan('tiny')) //tiny output format
+  console.log('morgan enabled');
+}
+
+app.use(logger)
+app.use(function(req, res, next){
+  console.log('Authenticating...');
+  next()
+})
+
 
 const posts = [
   {id:1, name: 'post1'},

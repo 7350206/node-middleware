@@ -1,0 +1,4 @@
+this is a text
+will see at localhost:port/read.txt
+
+more middleware@ expressjs.com/en/resourses/middleware
